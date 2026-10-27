@@ -4,7 +4,7 @@
 
 修改 Skill 时同步相关 references 与教程，运行 `python scripts/validate_repo.py`，并演练 references/examples.md 中受影响的用例。自动检查不替代模型行为验证。
 
-通过 Pull Request 提交变更。影响来源追踪、侧聊整包确认、主线程授权或状态含义的修改，应附实际演练记录。截图有变化时更新 HTML 演示页并重新截取，不使用图片伪装测试通过。
+通过 Pull Request 提交变更。影响压缩长度、关键细节保留、事实状态或单次输出行为的修改，应附实际演练记录。截图有变化时更新 HTML 演示页并重新截取，不使用图片伪装测试通过。
 
 当前处于 0.x 迭代期，工作流不兼容变化在 minor 发布中说明迁移方式；达到 1.0 后采用语义版本：修正文案为 patch，兼容能力为 minor，不兼容经验包格式或确认流程为 major。发布前更新 CHANGELOG.md、核对文档链接、生成版本标签和 Release。
 

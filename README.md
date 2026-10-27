@@ -1,85 +1,70 @@
 # side-handoff
 
-把侧聊反复打磨的理解交给主线程，让它知道**做什么、为什么、边界在哪里，以及下一步怎么做**。
+**在侧聊调用一次，得到一段可复制上下文，贴给主对话就能继续。**
 
-**侧聊蒸馏 → 展示整包 → 你确认 → 交接确认版本 → 主线程说明理解与计划 → 继续原任务**
+不需要审阅确认，不需要主对话调用 Merge，不要求文件权限。
 
-适用于代码、研究、写作、课程设计等任务。交接包由**行动摘要＋完整专题**组成；完整度以“能复现判断与执行”为标准，不按固定字数删减关键细节。
+## 怎么用
 
-## 最短使用流程
-
-### 1. 在侧聊准备审阅包
-
-讨论完成后发送：
+侧聊讨论告一段落后，发送：
 
 ```text
-$side-handoff Extract
-把我们打磨的成果蒸馏成行动摘要＋完整专题包。
-保留足以复现判断和执行的理由、边界、关键推导、反例、否决方案与具体行动。
-先展示完整包让我确认，别只给摘要。
+$side-handoff
+蒸馏当前侧聊，给我可直接贴到主对话的接续上下文。
 ```
 
-![侧聊整包审阅示例](docs/images/01-extract.png)
+它只输出一个可复制文本块。复制**块内全文**到主对话，作为补充上下文继续原任务；主对话不用调用 Skill。
 
-### 2. 在侧聊确认并取得交接指令
+![在侧聊调用一次](docs/images/01-extract.png)
 
-看过完整包后，例如回复：
+输出覆盖会影响继续工作的目标、当前方案、关键理由、硬约束、重要细节、进度/未验证项和下一步；只在相关时出现，不填冗长模板。
+
+![一次输出可复制上下文](docs/images/02-merge.png)
+
+![贴给主对话继续](docs/images/03-confirm.png)
+
+演示图是合成示例页的浏览器截图，非 Codex 原生界面，不证明真实任务已完成。
+
+## 为什么比“总结一下”更具体
+
+- **以接续为目标**：保留会改变主线程判断或行动的信息，而非按聊天时间线复述。
+- **压缩时保住条件**：数值、单位、范围、兼容性和关键反例不被泛化成“注意边界”。
+- **避免重复踩坑**：保留关键理由及容易重新提出的否决方案，但不逐条复述所有试探。
+- **事实不升格**：模型建议不写成用户决定；未执行不写已完成；声称通过不写实际验证。
+- **一次出成品**：内部检查遗漏和冗余后，只输出最终文本，不展示草稿或要求确认。
+
+默认目标约 **400–800 个中文字符**，简单则更短；这不是 token 数，也不是保证。复杂话题优先保关键约束，用户可指定预算：
 
 ```text
-确认这份 course@v1 整包，明确标为待议的建议仍保持待议。
+$side-handoff 约300字，重点保留最终方案、兼容约束和下一步。
 ```
 
-Skill 固定确认版本，准备一句交接指令：
+压缩有损，验收看关键条件是否保留、主线程能否继续，不声称无损或保证“保住绝大部分聊天”。
 
-- 可共享文件：用户指定目录优先，否则已确认项目根目录的 `docs/agent-handoffs/inbox/`；保存并回读后给真实路径。
-- 无共享文件权限：给完整可复制确认包，你把指令和包正文一起带回主线程。
-- 线程链接可附为追溯信息；不依赖跨线程工具一定能读到完整记录。
+## 安装
 
-![确认版本与交接载体示例](docs/images/02-merge.png)
+本机用户级位置：`~/.codex/skills/side-handoff`。
 
-### 3. 主线程接收并继续
-
-复制侧聊实际生成的指令，例如：
-
-```text
-$side-handoff Merge：接收并合并 course@v1；包文件：[替换为实际共享路径]。
-说明理解、对主任务的影响和调整后的计划，然后在原任务授权内继续。
-```
-
-“接收并合并”同时授权保存相关交接文档，**不重复审批已确认且无冲突的包**。只说“看看、评估”或要求先展示候选时，仍是只读。
-
-主线程核对相关专题与项目现状，保存完整经验及 INDEX，说明理解与计划后继续原任务。只在目标、硬约束或已确认决策矛盾时集中问你，只暂停受影响的工作。旧代码尚未实现方案，属于实现差距，不为此重审方案。
-
-![主线程接收并推进示例](docs/images/03-confirm.png)
-
-截图为合成教程页的真实浏览器截图，非 Codex 原生界面，不代表真实项目已执行。
-
-## 让新聊天找回经验
-
-首次使用时，Skill 可展示拟加入项目 AGENTS.md 的简短读取规则；你确认具体规则后才添加。后续聊天先查 INDEX，再按任务加载相关专题。尚未设置入口也不阻塞这次接收。
-
-## 安装与升级
-
-本机用户级位置为 `~/.codex/skills/side-handoff`。如果聊天已列出它，可直接使用。
-
-其他机器可克隆后复制核心文件；下面命令遇到已有安装会停止：
+其他机器：克隆本仓库后，复制核心 Skill。PowerShell 示例遇到已有安装会停止：
 
 ```powershell
 git clone https://github.com/tianxiangliu-ds/side-handoff.git
 $target = Join-Path $HOME '.codex/skills/side-handoff'
-if (Test-Path -LiteralPath $target) { throw '已有安装，请先比较并备份；停止覆盖。' }
+if (Test-Path -LiteralPath $target) { throw '已有安装，请先比较与备份，停止覆盖。' }
 New-Item -ItemType Directory -Path $target -ErrorAction Stop | Out-Null
 Copy-Item -LiteralPath './side-handoff/SKILL.md' -Destination $target
 Copy-Item -LiteralPath './side-handoff/references' -Destination $target -Recurse
 ```
 
-升级先备份并比较本地修改，仅同步 SKILL.md 和 references；保留其他自定义文件。v0.2.0 调整了确认流程，旧包的兼容方式见教程。发现机制参见 [OpenAI 官方 Skills 文档](https://developers.openai.com/codex/skills/)；没有被发现时，可提供实际 SKILL.md 路径要求读取，不因此扩大权限。
+核心流程自包含于 SKILL.md；正常提炼无需读取示例文件，不调用外部工具。
 
-## 深入使用
+## v0.3.0 的变化
 
-- [完整中文教程](docs/tutorial.zh-CN.md)：多侧聊、增量、冲突、无权限、新聊天。
-- [包格式与侧聊确认](references/package.md)、[主线程接收流程](references/merge.md)。
-- [可测试场景](references/examples.md)、[实际验证范围](docs/validation.md)。
-- [维护说明](CONTRIBUTING.md)、[版本记录](CHANGELOG.md)。
+旧版把交接做成了确认、包文件和合并归档流程。实际使用反馈表明操作过重。新版仅负责侧聊蒸馏，移除默认确认、Merge、版本回执、文件保存、INDEX 和 AGENTS.md 管理。旧 `Extract` 仍是提炼别名，旧主线程归档流程不再执行。
 
-当前版本 **v0.2.0**。CONFIRMED 表示接受方案，VERIFIED 表示限定范围的事实证据；二者相互独立。包确认也不把待议建议或假设变成已采纳、已验证结论。
+升级前备份本地修改，替换 SKILL.md 与本版本 references；过时 package.md / merge.md 不再是新版入口。仓库历史与旧 Release 保留原流程文档，已有项目交接文件不会被删除或迁移。
+
+- [中文教程与输出示例](docs/tutorial.zh-CN.md)
+- [开源策略调研及取舍](docs/research.md)
+- [测试场景](references/examples.md) / [验证范围](docs/validation.md)
+- [维护说明](CONTRIBUTING.md) / [版本记录](CHANGELOG.md)
